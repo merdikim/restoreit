@@ -1,0 +1,23 @@
+{
+  "name": "restoreit",
+  "private": true,
+  "version": "0.1.0",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,magenta \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev -w @restoreit/api",
+    "dev:web": "npm run dev -w @restoreit/web",
+    "build": "npm run build -w @restoreit/api && npm run build -w @restoreit/web",
+    "lint": "npm run lint -w @restoreit/api && npm run lint -w @restoreit/web",
+    "db:generate": "npm run prisma:generate -w @restoreit/api",
+    "db:migrate": "npm run prisma:migrate -w @restoreit/api",
+    "db:start": "docker compose up -d postgres",
+    "db:stop": "docker compose stop postgres"
+  }
+}

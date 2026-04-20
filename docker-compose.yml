@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: restoreit-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: restoreit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - restoreit-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  restoreit-postgres-data:
