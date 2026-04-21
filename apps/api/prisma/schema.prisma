@@ -14,14 +14,6 @@ enum JobStatus {
   failed
 }
 
-enum EnhancementType {
-  restore
-  colorize
-  upscale
-  face_enhance
-  all_in_one
-}
-
 model Photo {
   id           String   @id @default(cuid())
   userId       String
@@ -43,7 +35,6 @@ model Job {
   status         JobStatus         @default(pending)
   progress       Int               @default(0)
   errorMessage   String?
-  enhancements   EnhancementType[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
   completedAt    DateTime?

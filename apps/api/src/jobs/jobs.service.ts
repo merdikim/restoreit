@@ -1,36 +1,31 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { EnhancementType, JobStatus } from '@prisma/client';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { JobStatus } from '@prisma/client';
 
 import { PhotosService } from '../photos/photos.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { ProcessingService } from '../processing/processing.service.js';
+//import { ProcessingService } from '../processing/processing.service.js';
 import { STORAGE_PROVIDER } from '../storage/storage.tokens.js';
 import type { StorageProvider } from '../storage/storage.types.js';
 
 @Injectable()
 export class JobsService {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly photosService: PhotosService,
-    private readonly processingService: ProcessingService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(PhotosService) private readonly photosService: PhotosService,
+    //private readonly processingService: ProcessingService,
     @Inject(STORAGE_PROVIDER) private readonly storage: StorageProvider,
   ) {}
 
-  async createJob(userId: string, photoId: string, enhancements: EnhancementType[]) {
+  async createJob(userId: string, photoId: string) {
     const photo = await this.photosService.findOwnedPhoto(photoId, userId);
     if (!photo) {
       throw new NotFoundException('Photo not found');
     }
 
-    if (enhancements.includes(EnhancementType.all_in_one) && enhancements.length > 1) {
-      throw new BadRequestException('All-in-one preset must be selected on its own');
-    }
-
     const job = await this.prisma.job.create({
       data: {
         userId,
-        photoId,
-        enhancements,
+        photoId
       },
       include: {
         photo: true,
@@ -38,7 +33,7 @@ export class JobsService {
       },
     });
 
-    void this.processingService.processJob(job.id);
+    // void this.processingService.processJob(job.id);
 
     return this.toResponse(job);
   }
@@ -102,7 +97,6 @@ export class JobsService {
     status: JobStatus;
     progress: number;
     errorMessage: string | null;
-    enhancements: EnhancementType[];
     createdAt: Date;
     updatedAt: Date;
     completedAt: Date | null;
@@ -130,7 +124,6 @@ export class JobsService {
       status: job.status,
       progress: job.progress,
       errorMessage: job.errorMessage,
-      enhancements: job.enhancements,
       createdAt: job.createdAt,
       updatedAt: job.updatedAt,
       completedAt: job.completedAt,

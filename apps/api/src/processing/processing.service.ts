@@ -41,7 +41,6 @@ export class ProcessingService {
           jobId,
           photoPath: job.photo.storagePath,
           originalName: job.photo.originalName,
-          enhancements: job.enhancements,
         },
         async (progress) => {
           await this.prisma.job.update({

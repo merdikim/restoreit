@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EnhancementType } from '@prisma/client';
 import sharp from 'sharp';
 import { mkdir, stat } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
@@ -23,34 +22,22 @@ export class MockProcessingProvider implements ProcessingProvider {
     await delay(1000);
     await onProgress(35);
 
-    let image = sharp(this.storage.getAbsolutePath(input.photoPath)).rotate().jpeg({ quality: 92 });
-    const selected = new Set(input.enhancements);
-    const applyAll = selected.has(EnhancementType.all_in_one);
-
-    if (applyAll || selected.has(EnhancementType.restore)) {
-      image = image.normalize().sharpen(0.8);
-    }
-
-    if (applyAll || selected.has(EnhancementType.colorize)) {
-      image = image.modulate({
-        saturation: 1.25,
-        brightness: 1.04,
-      });
-    }
-
-    if (applyAll || selected.has(EnhancementType.face_enhance)) {
-      image = image.sharpen(1.2);
-    }
-
+    let image = sharp(this.storage.getAbsolutePath(input.photoPath))
+      .rotate()
+      .normalize()
+      .sharpen(0.8)
+      .modulate({
+        saturation: 1.1,
+        brightness: 1.02,
+      })
+      .jpeg({ quality: 92 });
     const metadata = await sharp(this.storage.getAbsolutePath(input.photoPath)).metadata();
-    if (applyAll || selected.has(EnhancementType.upscale)) {
-      image = image.resize({
-        width: metadata.width ? metadata.width * 2 : undefined,
-        height: metadata.height ? metadata.height * 2 : undefined,
-        fit: 'inside',
-        withoutEnlargement: false,
-      });
-    }
+    image = image.resize({
+      width: metadata.width ? metadata.width * 2 : undefined,
+      height: metadata.height ? metadata.height * 2 : undefined,
+      fit: 'inside',
+      withoutEnlargement: false,
+    });
 
     await delay(1200);
     await onProgress(65);

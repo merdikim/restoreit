@@ -1,8 +1,6 @@
 import { useAuth } from '@clerk/tanstack-react-start';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
 import { api } from '@/lib/api';
-import type { EnhancementType } from '@/types';
 
 async function requireToken(getToken: () => Promise<string | null>) {
   const token = await getToken();
@@ -46,8 +44,8 @@ export function useCreateJob() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ photoId, enhancements }: { photoId: string; enhancements: EnhancementType[] }) =>
-      api.createJob(photoId, enhancements, await requireToken(getToken)),
+    mutationFn: async ({ photoId }: { photoId: string }) =>
+      api.createJob(photoId, await requireToken(getToken)),
     onSuccess: (job) => {
       queryClient.setQueryData(['jobs', job.id], job);
       void queryClient.invalidateQueries({ queryKey: ['jobs'] });

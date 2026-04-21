@@ -1,10 +1,7 @@
-import type { EnhancementType } from '@prisma/client';
-
 export type ProcessingJobInput = {
   jobId: string;
   photoPath: string;
   originalName: string;
-  enhancements: EnhancementType[];
 };
 
 export type ProcessingJobOutput = {

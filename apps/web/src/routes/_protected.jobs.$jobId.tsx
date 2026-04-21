@@ -7,7 +7,7 @@ import { JobStatusBadge } from '@/components/jobs/job-status-badge';
 import { SectionCard } from '@/components/layout/section-card';
 import { useJob } from '@/hooks/use-jobs';
 import { api } from '@/lib/api';
-import { enhancementLabels, formatBytes, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 
 export const Route = createFileRoute('/_protected/jobs/$jobId')({
   component: JobDetailPage,
@@ -83,22 +83,6 @@ function JobDetailPage() {
           </p>
           {job.errorMessage ? <p className="mt-3 text-sm text-(--danger)">{job.errorMessage}</p> : null}
           {downloadError ? <p className="mt-3 text-sm text-(--danger)">{downloadError}</p> : null}
-        </SectionCard>
-
-        <SectionCard>
-          <h2 className="text-2xl font-semibold">Enhancements</h2>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {job.enhancements.map((enhancement) => (
-              <span key={enhancement} className="rounded-full bg-white px-3 py-1 text-sm text-(--muted)">
-                {enhancementLabels[enhancement]}
-              </span>
-            ))}
-          </div>
-          <dl className="mt-6 space-y-3 text-sm">
-            <InfoRow label="Original size" value={formatBytes(job.photo.sizeBytes)} />
-            <InfoRow label="Processed size" value={job.processedAsset ? formatBytes(job.processedAsset.sizeBytes) : 'Pending'} />
-            <InfoRow label="Status endpoint" value={`/api/jobs/${job.id}/status`} />
-          </dl>
         </SectionCard>
       </div>
 

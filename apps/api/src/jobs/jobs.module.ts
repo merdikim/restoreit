@@ -6,7 +6,7 @@ import { JobsController } from './jobs.controller.js';
 import { JobsService } from './jobs.service.js';
 
 @Module({
-  imports: [PhotosModule, ProcessingModule],
+  imports: [PhotosModule, /*ProcessingModule*/],
   controllers: [JobsController],
   providers: [JobsService],
 })

@@ -18,8 +18,8 @@ import { StorageModule } from './storage/storage.module.js';
     PrismaModule,
     StorageModule,
     PhotosModule,
+    JobsModule,
     //ProcessingModule,
-    //JobsModule,
     //HealthModule,
   ],
 })

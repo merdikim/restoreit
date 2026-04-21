@@ -50,10 +50,10 @@ export const api = {
       authToken,
     });
   },
-  createJob(photoId: string, enhancements: EnhancementType[], authToken: string) {
+  createJob(photoId: string, authToken: string) {
     return request<Job>('/jobs', {
       method: 'POST',
-      body: JSON.stringify({ photoId, enhancements }),
+      body: JSON.stringify({ photoId }),
       authToken,
     });
   },

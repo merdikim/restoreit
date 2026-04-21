@@ -18,24 +18,21 @@ function NewJobPage() {
 
   return (
     <div className="space-y-6 flex flex-col items-center pt-10">
-      {/* <div>
-        <h1 className="mt-2 text-4xl font-semibold">Upload a photo to restore</h1>
-      </div> */}
       <SectionCard className="p-4 sm:p-6 max-w-3xl w-full">
         <UploadForm
           isSubmitting={uploadPhoto.isPending || createJob.isPending}
           error={error}
           onSubmit={async ({ file }) => {
             const photo = await uploadPhoto.mutateAsync(file);
-            // const job = await createJob.mutateAsync({
-            //   photoId: photo.id,
-            // });
+            const job = await createJob.mutateAsync({
+              photoId: photo.id,
+            });
 
-            // await queryClient.invalidateQueries({ queryKey: ['jobs'] });
-            // void navigate({
-            //   to: '/jobs/$jobId',
-            //   params: { jobId: photo.id },
-            // });
+            await queryClient.invalidateQueries({ queryKey: ['jobs', job.id] });
+            void navigate({
+              to: '/jobs/$jobId',
+              params: { jobId: job.id },
+            });
           }}
         />
       </SectionCard>

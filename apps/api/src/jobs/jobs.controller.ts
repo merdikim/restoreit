@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
 
@@ -12,11 +12,11 @@ import { JobsService } from './jobs.service.js';
 @UseGuards(JwtAuthGuard)
 @Controller('jobs')
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {}
+  constructor(@Inject(JobsService) private readonly jobsService: JobsService) {}
 
   @Post()
   createJob(@CurrentUser() user: { id: string }, @Body() dto: CreateJobDto) {
-    return this.jobsService.createJob(user.id, dto.photoId, dto.enhancements);
+    return this.jobsService.createJob(user.id, dto.photoId);
   }
 
   @Get()
