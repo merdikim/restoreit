@@ -1,55 +1,22 @@
-import { getRouteApi } from '@tanstack/react-router';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
-import { clearToken, getToken, setToken } from '@/lib/auth-storage';
-import { api } from '@/lib/api';
-
-const rootRouteApi = getRouteApi('__root__');
+import { useUser } from '@clerk/tanstack-react-start';
+import type { User } from '@/lib/types';
 
 export function useCurrentUser() {
-  const token = getToken();
-  const { currentUser } = rootRouteApi.useRouteContext();
+  const { isLoaded, isSignedIn, user } = useUser();
 
-  return useQuery({
-    queryKey: ['auth', 'me'],
-    queryFn: api.me,
-    initialData: currentUser ?? undefined,
-    enabled: Boolean(token),
-    staleTime: 60_000,
-  });
-}
+  const clerkUser: User | null =
+    isSignedIn && user
+      ? {
+          id: user.id,
+          email: user.primaryEmailAddress?.emailAddress ?? user.emailAddresses[0]?.emailAddress ?? '',
+          createdAt: user.createdAt?.toISOString() ?? new Date().toISOString(),
+          updatedAt: user.updatedAt?.toISOString() ?? new Date().toISOString(),
+        }
+      : null;
 
-export function useLogin() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) => api.login(email, password),
-    onSuccess: (data) => {
-      setToken(data.token);
-      queryClient.setQueryData(['auth', 'me'], data.user);
-      void queryClient.invalidateQueries({ queryKey: ['jobs'] });
-    },
-  });
-}
-
-export function useRegister() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) => api.register(email, password),
-    onSuccess: (data) => {
-      setToken(data.token);
-      queryClient.setQueryData(['auth', 'me'], data.user);
-      void queryClient.invalidateQueries({ queryKey: ['jobs'] });
-    },
-  });
-}
-
-export function useLogout() {
-  const queryClient = useQueryClient();
-
-  return () => {
-    clearToken();
-    queryClient.clear();
+  return {
+    data: clerkUser,
+    isLoading: !isLoaded,
+    isError: false,
   };
 }

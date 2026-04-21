@@ -1,9 +1,9 @@
 import { env } from './env';
-import { getToken } from './auth-storage';
-import type { AuthResponse, Job, Photo, User } from './types';
+import type { EnhancementType, Job, Photo } from './types';
 
 type RequestOptions = RequestInit & {
   auth?: boolean;
+  authToken?: string | null;
 };
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -12,11 +12,8 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers.set('Content-Type', 'application/json');
   }
 
-  if (options.auth !== false) {
-    const token = getToken();
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
+  if (options.auth !== false && options.authToken) {
+    headers.set('Authorization', `Bearer ${options.authToken}`);
   }
 
   const response = await fetch(`${env.apiUrl}${path}`, {
@@ -43,43 +40,28 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 }
 
 export const api = {
-  register(email: string, password: string) {
-    return request<AuthResponse>('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-      auth: false,
-    });
-  },
-  login(email: string, password: string) {
-    return request<AuthResponse>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-      auth: false,
-    });
-  },
-  me() {
-    return request<User>('/auth/me');
-  },
-  uploadPhoto(file: File) {
+  uploadPhoto(file: File, authToken: string) {
     const formData = new FormData();
     formData.append('file', file);
 
     return request<Photo>('/photos/upload', {
       method: 'POST',
       body: formData,
+      authToken,
     });
   },
-  createJob(photoId: string, enhancements: string[]) {
+  createJob(photoId: string, enhancements: EnhancementType[], authToken: string) {
     return request<Job>('/jobs', {
       method: 'POST',
       body: JSON.stringify({ photoId, enhancements }),
+      authToken,
     });
   },
-  listJobs() {
-    return request<Job[]>('/jobs');
+  listJobs(authToken: string) {
+    return request<Job[]>('/jobs', { authToken });
   },
-  getJob(jobId: string) {
-    return request<Job>(`/jobs/${jobId}`);
+  getJob(jobId: string, authToken: string) {
+    return request<Job>(`/jobs/${jobId}`, { authToken });
   },
   getJobStatus(jobId: string) {
     return request<Job>(`/jobs/${jobId}/status`);
@@ -87,10 +69,9 @@ export const api = {
   getDownloadUrl(jobId: string) {
     return `${env.apiUrl}/jobs/${jobId}/download`;
   },
-  async downloadJob(jobId: string, filename: string) {
-    const token = getToken();
+  async downloadJob(jobId: string, filename: string, authToken: string) {
     const response = await fetch(`${env.apiUrl}/jobs/${jobId}/download`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      headers: { Authorization: `Bearer ${authToken}` },
     });
 
     if (!response.ok) {

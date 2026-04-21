@@ -1,9 +1,10 @@
-import { SignIn } from '@clerk/tanstack-react-start';
+import { SignUp } from '@clerk/tanstack-react-start';
 import { createFileRoute, redirect } from '@tanstack/react-router';
+
 import { AppShell } from '@/components/layout/app-shell';
 import { SectionCard } from '@/components/layout/section-card';
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute('/signup/$')({
   validateSearch: (search: Record<string, unknown>) => ({
     redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
   }),
@@ -14,10 +15,10 @@ export const Route = createFileRoute('/login')({
       });
     }
   },
-  component: LoginPage,
+  component: SignupCatchAllPage,
 });
 
-function LoginPage() {
+function SignupCatchAllPage() {
   const search = Route.useSearch();
   const redirectTarget =
     typeof search.redirect === 'string' && search.redirect.startsWith('/') ? search.redirect : '/dashboard';
@@ -26,12 +27,12 @@ function LoginPage() {
     <AppShell>
       <div className="mx-auto max-w-xl">
         <SectionCard>
-          <SignIn
+          <SignUp
             routing="path"
-            path="/login"
-            signUpUrl="/signup"
+            path="/signup"
+            signInUrl="/login"
             fallbackRedirectUrl={redirectTarget}
-            signUpFallbackRedirectUrl={redirectTarget}
+            signInFallbackRedirectUrl={redirectTarget}
           />
         </SectionCard>
       </div>

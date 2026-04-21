@@ -59,6 +59,30 @@ export class AuthService {
     return this.toSafeUser(user);
   }
 
+  async syncClerkUser(clerkUserId: string, email: string) {
+    const existingUser = await this.usersService.findById(clerkUserId);
+    if (existingUser) {
+      if (existingUser.email !== email) {
+        return this.toSafeUser(await this.usersService.updateEmail(existingUser.id, email));
+      }
+
+      return this.toSafeUser(existingUser);
+    }
+
+    const existingByEmail = await this.usersService.findByEmail(email);
+    if (existingByEmail) {
+      return this.toSafeUser(existingByEmail);
+    }
+
+    const user = await this.usersService.create({
+      id: clerkUserId,
+      email,
+      passwordHash: 'CLERK_MANAGED',
+    });
+
+    return this.toSafeUser(user);
+  }
+
   verifyToken(token: string) {
     return this.jwtService.verify<{ sub: string; email: string }>(token);
   }

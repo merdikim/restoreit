@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 import type { ReactNode } from 'react';
+import { ClerkProvider } from '@clerk/tanstack-react-start';
 import { QueryClientProvider } from '@tanstack/react-query';
 import {
   createRootRouteWithContext,
@@ -55,8 +56,10 @@ function RootDocument(props: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {props.children}
-        <Scripts />
+        <ClerkProvider>
+          {props.children}
+          <Scripts />
+        </ClerkProvider>
       </body>
     </html>
   );

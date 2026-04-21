@@ -13,6 +13,8 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SignupSplatRouteImport } from './routes/signup.$'
+import { Route as LoginSplatRouteImport } from './routes/login.$'
 import { Route as ProtectedSettingsRouteImport } from './routes/_protected.settings'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected.dashboard'
 import { Route as ProtectedJobsNewRouteImport } from './routes/_protected.jobs.new'
@@ -37,6 +39,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupSplatRoute = SignupSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => SignupRoute,
+} as any)
+const LoginSplatRoute = LoginSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => LoginRoute,
+} as any)
 const ProtectedSettingsRoute = ProtectedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -60,19 +72,23 @@ const ProtectedJobsJobIdRoute = ProtectedJobsJobIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/login': typeof LoginRouteWithChildren
+  '/signup': typeof SignupRouteWithChildren
   '/dashboard': typeof ProtectedDashboardRoute
   '/settings': typeof ProtectedSettingsRoute
+  '/login/$': typeof LoginSplatRoute
+  '/signup/$': typeof SignupSplatRoute
   '/jobs/$jobId': typeof ProtectedJobsJobIdRoute
   '/jobs/new': typeof ProtectedJobsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/login': typeof LoginRouteWithChildren
+  '/signup': typeof SignupRouteWithChildren
   '/dashboard': typeof ProtectedDashboardRoute
   '/settings': typeof ProtectedSettingsRoute
+  '/login/$': typeof LoginSplatRoute
+  '/signup/$': typeof SignupSplatRoute
   '/jobs/$jobId': typeof ProtectedJobsJobIdRoute
   '/jobs/new': typeof ProtectedJobsNewRoute
 }
@@ -80,10 +96,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/login': typeof LoginRouteWithChildren
+  '/signup': typeof SignupRouteWithChildren
   '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/_protected/settings': typeof ProtectedSettingsRoute
+  '/login/$': typeof LoginSplatRoute
+  '/signup/$': typeof SignupSplatRoute
   '/_protected/jobs/$jobId': typeof ProtectedJobsJobIdRoute
   '/_protected/jobs/new': typeof ProtectedJobsNewRoute
 }
@@ -95,6 +113,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/settings'
+    | '/login/$'
+    | '/signup/$'
     | '/jobs/$jobId'
     | '/jobs/new'
   fileRoutesByTo: FileRoutesByTo
@@ -104,6 +124,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/settings'
+    | '/login/$'
+    | '/signup/$'
     | '/jobs/$jobId'
     | '/jobs/new'
   id:
@@ -114,6 +136,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_protected/dashboard'
     | '/_protected/settings'
+    | '/login/$'
+    | '/signup/$'
     | '/_protected/jobs/$jobId'
     | '/_protected/jobs/new'
   fileRoutesById: FileRoutesById
@@ -121,8 +145,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRoute: typeof ProtectedRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
+  LoginRoute: typeof LoginRouteWithChildren
+  SignupRoute: typeof SignupRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -154,6 +178,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/signup/$': {
+      id: '/signup/$'
+      path: '/$'
+      fullPath: '/signup/$'
+      preLoaderRoute: typeof SignupSplatRouteImport
+      parentRoute: typeof SignupRoute
+    }
+    '/login/$': {
+      id: '/login/$'
+      path: '/$'
+      fullPath: '/login/$'
+      preLoaderRoute: typeof LoginSplatRouteImport
+      parentRoute: typeof LoginRoute
     }
     '/_protected/settings': {
       id: '/_protected/settings'
@@ -204,21 +242,43 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
   ProtectedRouteChildren,
 )
 
+interface LoginRouteChildren {
+  LoginSplatRoute: typeof LoginSplatRoute
+}
+
+const LoginRouteChildren: LoginRouteChildren = {
+  LoginSplatRoute: LoginSplatRoute,
+}
+
+const LoginRouteWithChildren = LoginRoute._addFileChildren(LoginRouteChildren)
+
+interface SignupRouteChildren {
+  SignupSplatRoute: typeof SignupSplatRoute
+}
+
+const SignupRouteChildren: SignupRouteChildren = {
+  SignupSplatRoute: SignupSplatRoute,
+}
+
+const SignupRouteWithChildren =
+  SignupRoute._addFileChildren(SignupRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRouteWithChildren,
-  LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
+  LoginRoute: LoginRouteWithChildren,
+  SignupRoute: SignupRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

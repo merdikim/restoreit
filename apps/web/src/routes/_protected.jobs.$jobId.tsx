@@ -1,3 +1,4 @@
+import { useAuth } from '@clerk/tanstack-react-start';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/_protected/jobs/$jobId')({
 
 function JobDetailPage() {
   const { jobId } = Route.useParams();
+  const { getToken } = useAuth();
   const jobQuery = useJob(jobId);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -46,7 +48,12 @@ function JobDetailPage() {
                 try {
                   setDownloadError(null);
                   setIsDownloading(true);
-                  await api.downloadJob(job.id, `${job.photo.originalName}-restored.jpg`);
+                  const token = await getToken();
+                  if (!token) {
+                    throw new Error('You must be signed in to download results.');
+                  }
+
+                  await api.downloadJob(job.id, `${job.photo.originalName}-restored.jpg`, token);
                 } catch (error) {
                   setDownloadError(error instanceof Error ? error.message : 'Download failed');
                 } finally {

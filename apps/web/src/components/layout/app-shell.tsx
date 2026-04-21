@@ -1,24 +1,23 @@
-import { Link, getRouteApi, useNavigate } from '@tanstack/react-router';
+import { Show, UserButton } from '@clerk/tanstack-react-start';
+import { Link, getRouteApi } from '@tanstack/react-router';
 
-import { useCurrentUser, useLogout } from '@/hooks/use-auth';
+import { useCurrentUser } from '@/hooks/use-auth';
 
 const rootRouteApi = getRouteApi('__root__');
 
 export function AppShell(props: { children: React.ReactNode }) {
-  const navigate = useNavigate();
-  const logout = useLogout();
   const { currentUser } = rootRouteApi.useRouteContext();
   const { data: queriedUser } = useCurrentUser();
   const user = queriedUser ?? currentUser;
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-[var(--line)] bg-[rgba(255,250,244,0.88)] backdrop-blur">
+      <header className="border-b border-(--line) bg-[rgba(255,250,244,0.88)] backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link to="/" className="text-2xl font-bold tracking-tight text-[var(--brand-dark)]">
+          <Link to="/" className="text-2xl font-bold tracking-tight text-(--brand-dark)">
             RestoreIt
           </Link>
-          <nav className="flex items-center gap-5 text-sm text-[var(--muted)]">
+          <nav className="flex items-center gap-5 text-sm text-(--muted)">
             {user ? (
               <>
                 <Link to="/dashboard" activeProps={{ className: 'text-[var(--brand-dark)]' }}>
@@ -32,25 +31,18 @@ export function AppShell(props: { children: React.ReactNode }) {
                 </Link>
               </>
             ) : null}
-            {user ? (
-              <button
-                className="rounded-full border border-[var(--line)] px-4 py-2 text-[var(--ink)]"
-                onClick={() => {
-                  logout();
-                  void navigate({ to: '/login', search: { redirect: undefined } });
-                }}
-              >
-                Logout
-              </button>
-            ) : (
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
+            <Show when="signed-out">
               <Link
                 to="/login"
                 search={{ redirect: undefined }}
-                className="rounded-full bg-[var(--brand)] px-4 py-2 text-white"
+                className="rounded-full bg-(--brand) px-4 py-2 text-white"
               >
                 Login
               </Link>
-            )}
+            </Show>
           </nav>
         </div>
       </header>

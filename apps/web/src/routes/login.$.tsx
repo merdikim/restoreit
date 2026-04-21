@@ -1,9 +1,10 @@
 import { SignIn } from '@clerk/tanstack-react-start';
 import { createFileRoute, redirect } from '@tanstack/react-router';
+
 import { AppShell } from '@/components/layout/app-shell';
 import { SectionCard } from '@/components/layout/section-card';
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute('/login/$')({
   validateSearch: (search: Record<string, unknown>) => ({
     redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
   }),
@@ -14,10 +15,10 @@ export const Route = createFileRoute('/login')({
       });
     }
   },
-  component: LoginPage,
+  component: LoginCatchAllPage,
 });
 
-function LoginPage() {
+function LoginCatchAllPage() {
   const search = Route.useSearch();
   const redirectTarget =
     typeof search.redirect === 'string' && search.redirect.startsWith('/') ? search.redirect : '/dashboard';

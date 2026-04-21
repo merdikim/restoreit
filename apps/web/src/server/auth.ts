@@ -1,26 +1,26 @@
+import { auth, clerkClient } from '@clerk/tanstack-react-start/server';
 import { createServerFn } from '@tanstack/react-start';
-import { getCookie } from '@tanstack/react-start/server';
-
-import { TOKEN_KEY } from '@/lib/auth-storage';
-import { env } from '@/lib/env';
 import type { User } from '@/lib/types';
 
 export const getCurrentUserServerFn = createServerFn({ method: 'GET' }).handler(async () => {
-  const token = getCookie(TOKEN_KEY);
-
-  if (!token) {
+  const { isAuthenticated, userId } = await auth();
+  if (!isAuthenticated || !userId) {
     return null;
   }
 
-  const response = await fetch(`${env.apiUrl}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const user = await clerkClient().users.getUser(userId);
+  const primaryEmail =
+    user.emailAddresses.find((emailAddress) => emailAddress.id === user.primaryEmailAddressId)?.emailAddress ??
+    user.emailAddresses[0]?.emailAddress;
 
-  if (!response.ok) {
+  if (!primaryEmail) {
     return null;
   }
 
-  return (await response.json()) as User;
+  return {
+    id: user.id,
+    email: primaryEmail,
+    createdAt: new Date(user.createdAt).toISOString(),
+    updatedAt: new Date(user.updatedAt).toISOString(),
+  } satisfies User;
 });

@@ -5,10 +5,11 @@ declare global {
     interface User {
       id: string;
       email: string;
+      clerkUserId?: string;
     }
 
     interface Request {
-      user?: User | { id: string; email: string };
+      user?: User | { id: string; email: string; clerkUserId?: string };
     }
   }
 }
