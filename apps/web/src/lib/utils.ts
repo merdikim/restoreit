@@ -16,11 +16,3 @@ export function formatBytes(bytes: number) {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
-
-export const enhancementLabels: Record<string, string> = {
-  restore: 'Restore',
-  colorize: 'Colorize',
-  upscale: 'Upscale',
-  face_enhance: 'Face Enhance',
-  all_in_one: 'All-in-One',
-};

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 
 import { JobStatusBadge } from '@/components/jobs/job-status-badge';
-import { enhancementLabels, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import type { Job } from '@/types';
 
 export function JobCard(props: { job: Job }) {
@@ -30,13 +30,6 @@ export function JobCard(props: { job: Job }) {
           <div className="h-2 overflow-hidden rounded-full bg-white">
             <div className="h-full rounded-full bg-[var(--brand)]" style={{ width: `${props.job.progress}%` }} />
           </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {props.job.enhancements.map((enhancement) => (
-            <span key={enhancement} className="rounded-full bg-white px-3 py-1 text-xs text-[var(--muted)]">
-              {enhancementLabels[enhancement]}
-            </span>
-          ))}
         </div>
       </div>
     </Link>

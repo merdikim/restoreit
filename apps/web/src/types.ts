@@ -1,12 +1,5 @@
 export type JobStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
-export type EnhancementType =
-  | 'restore'
-  | 'colorize'
-  | 'upscale'
-  | 'face_enhance'
-  | 'all_in_one';
-
 export type User = {
   id: string;
   email: string;
@@ -45,7 +38,6 @@ export type Job = {
   status: JobStatus;
   progress: number;
   errorMessage: string | null;
-  enhancements: EnhancementType[];
   createdAt: string;
   updatedAt: string;
   completedAt: string | null;

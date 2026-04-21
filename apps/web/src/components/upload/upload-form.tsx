@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import type { EnhancementType } from '@/types';
 
 export function UploadForm(props: {
   isSubmitting?: boolean;

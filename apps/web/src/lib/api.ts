@@ -1,5 +1,5 @@
 import { env } from './env';
-import type { EnhancementType, Job, Photo } from '../types';
+import type { Job, Photo } from '../types';
 
 type RequestOptions = RequestInit & {
   auth?: boolean;
