@@ -10,6 +10,10 @@ import { ProcessingService } from './processing.service.js';
     MockProcessingProvider,
     FutureAiProcessingProvider,
     {
+      provide: MOCK_PROCESSING_PROVIDER,
+      useExisting: MockProcessingProvider,
+    },
+    {
       provide: PROCESSING_PROVIDER,
       useExisting: MockProcessingProvider,
     },

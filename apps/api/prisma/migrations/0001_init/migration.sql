@@ -1,15 +1,6 @@
 CREATE TYPE "JobStatus" AS ENUM ('pending', 'processing', 'completed', 'failed');
 CREATE TYPE "EnhancementType" AS ENUM ('restore', 'colorize', 'upscale', 'face_enhance', 'all_in_one');
 
-CREATE TABLE "User" (
-  "id" TEXT NOT NULL,
-  "email" TEXT NOT NULL,
-  "passwordHash" TEXT NOT NULL,
-  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updatedAt" TIMESTAMP(3) NOT NULL,
-  CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
 CREATE TABLE "Photo" (
   "id" TEXT NOT NULL,
   "userId" TEXT NOT NULL,
@@ -51,18 +42,7 @@ CREATE TABLE "ProcessedAsset" (
   CONSTRAINT "ProcessedAsset_pkey" PRIMARY KEY ("id")
 );
 
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "ProcessedAsset_jobId_key" ON "ProcessedAsset"("jobId");
-
-ALTER TABLE "Photo"
-  ADD CONSTRAINT "Photo_userId_fkey"
-  FOREIGN KEY ("userId") REFERENCES "User"("id")
-  ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE "Job"
-  ADD CONSTRAINT "Job_userId_fkey"
-  FOREIGN KEY ("userId") REFERENCES "User"("id")
-  ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "Job"
   ADD CONSTRAINT "Job_photoId_fkey"

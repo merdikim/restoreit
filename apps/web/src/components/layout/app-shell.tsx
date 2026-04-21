@@ -13,7 +13,7 @@ export function AppShell(props: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
       <header className="border-b border-(--line) ">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex items-center justify-between px-6 py-4">
           <Link to="/" className="text-2xl font-bold tracking-tight text-(--brand-dark)">
             RestoreIt
           </Link>
@@ -26,9 +26,9 @@ export function AppShell(props: { children: React.ReactNode }) {
                 <Link to="/jobs/new" activeProps={{ className: 'text-[var(--brand-dark)]' }}>
                   New Job
                 </Link>
-                <Link to="/settings" activeProps={{ className: 'text-[var(--brand-dark)]' }}>
+                {/* <Link to="/settings" activeProps={{ className: 'text-[var(--brand-dark)]' }}>
                   Settings
-                </Link>
+                </Link> */}
               </>
             ) : null}
             <Show when="signed-in">

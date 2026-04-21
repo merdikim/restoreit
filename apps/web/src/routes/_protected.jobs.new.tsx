@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-
 import { SectionCard } from '@/components/layout/section-card';
 import { UploadForm } from '@/components/upload/upload-form';
 import { useCreateJob, useUploadPhoto } from '@/hooks/use-jobs';
@@ -18,27 +17,25 @@ function NewJobPage() {
   const error = uploadPhoto.error?.message ?? createJob.error?.message ?? null;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-sm uppercase tracking-[0.2em] text-[var(--brand)]">New Job</p>
+    <div className="space-y-6 flex flex-col items-center pt-10">
+      {/* <div>
         <h1 className="mt-2 text-4xl font-semibold">Upload a photo to restore</h1>
-      </div>
-      <SectionCard className="p-4 sm:p-6">
+      </div> */}
+      <SectionCard className="p-4 sm:p-6 max-w-3xl w-full">
         <UploadForm
           isSubmitting={uploadPhoto.isPending || createJob.isPending}
           error={error}
-          onSubmit={async ({ file, enhancements }) => {
+          onSubmit={async ({ file }) => {
             const photo = await uploadPhoto.mutateAsync(file);
-            const job = await createJob.mutateAsync({
-              photoId: photo.id,
-              enhancements,
-            });
+            // const job = await createJob.mutateAsync({
+            //   photoId: photo.id,
+            // });
 
-            await queryClient.invalidateQueries({ queryKey: ['jobs'] });
-            void navigate({
-              to: '/jobs/$jobId',
-              params: { jobId: job.id },
-            });
+            // await queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            // void navigate({
+            //   to: '/jobs/$jobId',
+            //   params: { jobId: photo.id },
+            // });
           }}
         />
       </SectionCard>

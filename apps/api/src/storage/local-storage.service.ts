@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { mkdir, copyFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 
 import { appRoot } from '../common/app-paths.js';
 import type { StorageProvider } from './storage.types.js';
+import { getUploadDir } from './storage-paths.js';
 
 @Injectable()
 export class LocalStorageService implements StorageProvider {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(@Inject(ConfigService) private readonly configService: ConfigService) {}
 
   async ensureReady(): Promise<void> {
     await mkdir(this.getAbsolutePath('originals'), { recursive: true });
@@ -16,7 +17,7 @@ export class LocalStorageService implements StorageProvider {
   }
 
   getAbsolutePath(storagePath: string): string {
-    const uploadDir = this.configService.get<string>('UPLOAD_DIR', './uploads');
+    const uploadDir = getUploadDir(this.configService.get<string>('UPLOAD_DIR'));
     return resolve(appRoot, uploadDir, storagePath);
   }
 

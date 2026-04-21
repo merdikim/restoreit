@@ -8,7 +8,7 @@ import type { StorageProvider } from '../storage/storage.types.js';
 @Injectable()
 export class PhotosService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject(STORAGE_PROVIDER) private readonly storage: StorageProvider,
   ) {}
 

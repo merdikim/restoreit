@@ -21,11 +21,11 @@ function JobDetailPage() {
   const [isDownloading, setIsDownloading] = useState(false);
 
   if (jobQuery.isLoading) {
-    return <p className="text-[var(--muted)]">Loading job...</p>;
+    return <p className="text-(--muted)">Loading job...</p>;
   }
 
   if (jobQuery.error || !jobQuery.data) {
-    return <p className="text-[var(--danger)]">{jobQuery.error?.message ?? 'Job not found'}</p>;
+    return <p className="text-(--danger)">{jobQuery.error?.message ?? 'Job not found'}</p>;
   }
 
   const job = jobQuery.data;
@@ -34,7 +34,7 @@ function JobDetailPage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-[var(--brand)]">Job Details</p>
+          <p className="text-sm uppercase tracking-[0.2em] text-(--brand)">Job Details</p>
           <h1 className="mt-2 text-4xl font-semibold">{job.photo.originalName}</h1>
         </div>
         <div className="flex items-center gap-3">
@@ -42,7 +42,7 @@ function JobDetailPage() {
           {job.processedAsset ? (
             <button
               type="button"
-              className="rounded-full bg-[var(--brand)] px-5 py-3 font-semibold text-white"
+              className="rounded-full bg-(--brand) px-5 py-3 font-semibold text-white"
               disabled={isDownloading}
               onClick={async () => {
                 try {
@@ -76,20 +76,20 @@ function JobDetailPage() {
             <span className="text-lg font-semibold">{job.progress}%</span>
           </div>
           <div className="mt-4 h-3 overflow-hidden rounded-full bg-white">
-            <div className="h-full rounded-full bg-[var(--brand)]" style={{ width: `${job.progress}%` }} />
+            <div className="h-full rounded-full bg-(--brand)" style={{ width: `${job.progress}%` }} />
           </div>
-          <p className="mt-4 text-sm text-[var(--muted)]">
+          <p className="mt-4 text-sm text-(--muted)">
             Created {formatDate(job.createdAt)}{job.completedAt ? ` • Completed ${formatDate(job.completedAt)}` : ''}
           </p>
-          {job.errorMessage ? <p className="mt-3 text-sm text-[var(--danger)]">{job.errorMessage}</p> : null}
-          {downloadError ? <p className="mt-3 text-sm text-[var(--danger)]">{downloadError}</p> : null}
+          {job.errorMessage ? <p className="mt-3 text-sm text-(--danger)">{job.errorMessage}</p> : null}
+          {downloadError ? <p className="mt-3 text-sm text-(--danger)">{downloadError}</p> : null}
         </SectionCard>
 
         <SectionCard>
           <h2 className="text-2xl font-semibold">Enhancements</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {job.enhancements.map((enhancement) => (
-              <span key={enhancement} className="rounded-full bg-white px-3 py-1 text-sm text-[var(--muted)]">
+              <span key={enhancement} className="rounded-full bg-white px-3 py-1 text-sm text-(--muted)">
                 {enhancementLabels[enhancement]}
               </span>
             ))}
@@ -102,7 +102,7 @@ function JobDetailPage() {
         </SectionCard>
       </div>
 
-      <Link to="/dashboard" className="text-sm font-semibold text-[var(--brand)]">
+      <Link to="/dashboard" className="text-sm font-semibold text-(--brand)">
         Back to dashboard
       </Link>
     </div>
@@ -112,7 +112,7 @@ function JobDetailPage() {
 function InfoRow(props: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <dt className="text-[var(--muted)]">{props.label}</dt>
+      <dt className="text-(--muted)">{props.label}</dt>
       <dd className="font-medium text-right">{props.value}</dd>
     </div>
   );
