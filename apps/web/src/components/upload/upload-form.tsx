@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type { EnhancementType } from '@/lib/types';
+import type { EnhancementType } from '@/types';
 import { enhancementLabels } from '@/lib/utils';
 
 const options: EnhancementType[] = ['restore', 'colorize', 'upscale', 'face_enhance', 'all_in_one'];

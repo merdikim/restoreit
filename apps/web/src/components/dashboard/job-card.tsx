@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 
 import { JobStatusBadge } from '@/components/jobs/job-status-badge';
 import { enhancementLabels, formatDate } from '@/lib/utils';
-import type { Job } from '@/lib/types';
+import type { Job } from '@/types';
 
 export function JobCard(props: { job: Job }) {
   return (

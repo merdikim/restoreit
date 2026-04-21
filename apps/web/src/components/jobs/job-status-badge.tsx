@@ -1,4 +1,4 @@
-import type { JobStatus } from '@/lib/types';
+import type { JobStatus } from '@/types';
 
 const styles: Record<JobStatus, string> = {
   pending: 'bg-amber-100 text-amber-800',

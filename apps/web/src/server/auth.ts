@@ -1,6 +1,6 @@
 import { auth, clerkClient } from '@clerk/tanstack-react-start/server';
 import { createServerFn } from '@tanstack/react-start';
-import type { User } from '@/lib/types';
+import type { User } from '@/types';
 
 export const getCurrentUserServerFn = createServerFn({ method: 'GET' }).handler(async () => {
   const { isAuthenticated, userId } = await auth();

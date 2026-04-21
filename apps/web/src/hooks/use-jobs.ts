@@ -2,7 +2,7 @@ import { useAuth } from '@clerk/tanstack-react-start';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
-import type { EnhancementType } from '@/lib/types';
+import type { EnhancementType } from '@/types';
 
 async function requireToken(getToken: () => Promise<string | null>) {
   const token = await getToken();

@@ -9,22 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SignupSplatRouteImport } from './routes/signup.$'
 import { Route as LoginSplatRouteImport } from './routes/login.$'
 import { Route as ProtectedSettingsRouteImport } from './routes/_protected.settings'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected.dashboard'
 import { Route as ProtectedJobsNewRouteImport } from './routes/_protected.jobs.new'
 import { Route as ProtectedJobsJobIdRouteImport } from './routes/_protected.jobs.$jobId'
 
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -38,11 +31,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const SignupSplatRoute = SignupSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => SignupRoute,
 } as any)
 const LoginSplatRoute = LoginSplatRouteImport.update({
   id: '/$',
@@ -73,22 +61,18 @@ const ProtectedJobsJobIdRoute = ProtectedJobsJobIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRouteWithChildren
-  '/signup': typeof SignupRouteWithChildren
   '/dashboard': typeof ProtectedDashboardRoute
   '/settings': typeof ProtectedSettingsRoute
   '/login/$': typeof LoginSplatRoute
-  '/signup/$': typeof SignupSplatRoute
   '/jobs/$jobId': typeof ProtectedJobsJobIdRoute
   '/jobs/new': typeof ProtectedJobsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRouteWithChildren
-  '/signup': typeof SignupRouteWithChildren
   '/dashboard': typeof ProtectedDashboardRoute
   '/settings': typeof ProtectedSettingsRoute
   '/login/$': typeof LoginSplatRoute
-  '/signup/$': typeof SignupSplatRoute
   '/jobs/$jobId': typeof ProtectedJobsJobIdRoute
   '/jobs/new': typeof ProtectedJobsNewRoute
 }
@@ -97,11 +81,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteWithChildren
   '/login': typeof LoginRouteWithChildren
-  '/signup': typeof SignupRouteWithChildren
   '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/_protected/settings': typeof ProtectedSettingsRoute
   '/login/$': typeof LoginSplatRoute
-  '/signup/$': typeof SignupSplatRoute
   '/_protected/jobs/$jobId': typeof ProtectedJobsJobIdRoute
   '/_protected/jobs/new': typeof ProtectedJobsNewRoute
 }
@@ -110,22 +92,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
-    | '/signup'
     | '/dashboard'
     | '/settings'
     | '/login/$'
-    | '/signup/$'
     | '/jobs/$jobId'
     | '/jobs/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
-    | '/signup'
     | '/dashboard'
     | '/settings'
     | '/login/$'
-    | '/signup/$'
     | '/jobs/$jobId'
     | '/jobs/new'
   id:
@@ -133,11 +111,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/login'
-    | '/signup'
     | '/_protected/dashboard'
     | '/_protected/settings'
     | '/login/$'
-    | '/signup/$'
     | '/_protected/jobs/$jobId'
     | '/_protected/jobs/new'
   fileRoutesById: FileRoutesById
@@ -146,18 +122,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRoute: typeof ProtectedRouteWithChildren
   LoginRoute: typeof LoginRouteWithChildren
-  SignupRoute: typeof SignupRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -178,13 +146,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/signup/$': {
-      id: '/signup/$'
-      path: '/$'
-      fullPath: '/signup/$'
-      preLoaderRoute: typeof SignupSplatRouteImport
-      parentRoute: typeof SignupRoute
     }
     '/login/$': {
       id: '/login/$'
@@ -252,22 +213,10 @@ const LoginRouteChildren: LoginRouteChildren = {
 
 const LoginRouteWithChildren = LoginRoute._addFileChildren(LoginRouteChildren)
 
-interface SignupRouteChildren {
-  SignupSplatRoute: typeof SignupSplatRoute
-}
-
-const SignupRouteChildren: SignupRouteChildren = {
-  SignupSplatRoute: SignupSplatRoute,
-}
-
-const SignupRouteWithChildren =
-  SignupRoute._addFileChildren(SignupRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRouteWithChildren,
   LoginRoute: LoginRouteWithChildren,
-  SignupRoute: SignupRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

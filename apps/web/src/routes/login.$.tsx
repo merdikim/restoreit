@@ -1,8 +1,5 @@
-import { SignIn } from '@clerk/tanstack-react-start';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-
-import { AppShell } from '@/components/layout/app-shell';
-import { SectionCard } from '@/components/layout/section-card';
+import Login from '@/components/auth/login';
 
 export const Route = createFileRoute('/login/$')({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -24,18 +21,6 @@ function LoginCatchAllPage() {
     typeof search.redirect === 'string' && search.redirect.startsWith('/') ? search.redirect : '/dashboard';
 
   return (
-    <AppShell>
-      <div className="mx-auto max-w-xl">
-        <SectionCard>
-          <SignIn
-            routing="path"
-            path="/login"
-            signUpUrl="/signup"
-            fallbackRedirectUrl={redirectTarget}
-            signUpFallbackRedirectUrl={redirectTarget}
-          />
-        </SectionCard>
-      </div>
-    </AppShell>
+    <Login path='/login' fallbackRedirectUrl={redirectTarget} />
   );
 }

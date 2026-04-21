@@ -1,5 +1,5 @@
 import { useUser } from '@clerk/tanstack-react-start';
-import type { User } from '@/lib/types';
+import type { User } from '@/types';
 
 export function useCurrentUser() {
   const { isLoaded, isSignedIn, user } = useUser();

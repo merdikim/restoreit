@@ -10,7 +10,7 @@ import {
 } from '@tanstack/react-router';
 
 import '@/styles.css';
-import type { User } from '@/lib/types';
+import type { User } from '@/types';
 import { getCurrentUserServerFn } from '@/server/auth';
 
 type RouterContext = {
