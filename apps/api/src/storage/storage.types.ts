@@ -7,7 +7,14 @@ export type FileMetadata = {
 
 export interface StorageProvider {
   ensureReady(): Promise<void>;
-  getAbsolutePath(storagePath: string): string;
   getPublicUrl(storagePath: string): string;
-  copyToProcessed(sourcePath: string, targetFilename: string): Promise<{ storagePath: string }>;
+  getDownloadUrl(storagePath: string, downloadName?: string): Promise<string>;
+  getObjectBuffer(storagePath: string): Promise<Buffer>;
+  putObject(
+    storagePath: string,
+    contents: Buffer,
+    options?: {
+      contentType?: string;
+    },
+  ): Promise<void>;
 }

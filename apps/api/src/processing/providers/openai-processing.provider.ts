@@ -1,8 +1,8 @@
 import OpenAI, { toFile } from 'openai';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { mkdir, stat, writeFile } from 'node:fs/promises';
-import { basename, extname, join } from 'node:path';
+import { basename, extname } from 'node:path';
+import { join } from 'node:path/posix';
 import sharp from 'sharp';
 
 import { STORAGE_PROVIDER } from '../../storage/storage.tokens.js';
@@ -25,8 +25,8 @@ export class OpenAIProcessingProvider implements ProcessingProvider {
     }
 
     const model = this.configService.get<string>('OPENAI_IMAGE_MODEL', 'gpt-image-1.5');
-    const sourcePath = this.storage.getAbsolutePath(input.photoPath);
-    const normalizedBuffer = await sharp(sourcePath).rotate().png().toBuffer();
+    const sourceBuffer = await this.storage.getObjectBuffer(input.photoPath);
+    const normalizedBuffer = await sharp(sourceBuffer).rotate().png().toBuffer();
     const client = new OpenAI({ apiKey });
 
     await onProgress(30);
@@ -56,21 +56,21 @@ export class OpenAIProcessingProvider implements ProcessingProvider {
 
     const outputName = `${basename(input.originalName, extname(input.originalName))}-${input.jobId}.png`;
     const storagePath = join('processed', outputName);
-    const targetPath = this.storage.getAbsolutePath(storagePath);
+    const outputBuffer = Buffer.from(generatedImage, 'base64');
 
-    await mkdir(this.storage.getAbsolutePath('processed'), { recursive: true });
-    await writeFile(targetPath, Buffer.from(generatedImage, 'base64'));
+    await this.storage.putObject(storagePath, outputBuffer, {
+      contentType: 'image/png',
+    });
     await onProgress(90);
 
-    const outputMeta = await sharp(targetPath).metadata();
-    const outputStats = await stat(targetPath);
+    const outputMeta = await sharp(outputBuffer).metadata();
 
     await onProgress(100);
 
     return {
       storagePath,
       mimeType: 'image/png',
-      sizeBytes: outputStats.size,
+      sizeBytes: outputBuffer.byteLength,
       width: outputMeta.width,
       height: outputMeta.height,
     };

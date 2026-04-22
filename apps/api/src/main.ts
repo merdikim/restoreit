@@ -7,8 +7,8 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module.js';
-import { LocalStorageService } from './storage/local-storage.service.js';
-import { getUploadRoot } from './storage/storage-paths.js';
+import { STORAGE_PROVIDER } from './storage/storage.tokens.js';
+import type { StorageProvider } from './storage/storage.types.js';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -16,11 +16,11 @@ async function bootstrap() {
   });
 
   const configService = app.get(ConfigService);
-  const localStorageService = app.get(LocalStorageService);
+  const storage = app.get<StorageProvider>(STORAGE_PROVIDER);
   const port = configService.get<number>('PORT', 4000);
   const frontendUrl = configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
 
-  await localStorageService.ensureReady();
+  await storage.ensureReady();
 
   app.enableCors({
     origin: frontendUrl,
@@ -36,9 +36,6 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api');
-  app.useStaticAssets(getUploadRoot(configService.get<string>('UPLOAD_DIR')), {
-    prefix: '/uploads/',
-  });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('RestoreIt API')

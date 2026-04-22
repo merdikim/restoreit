@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { join } from 'node:path/posix';
 import sharp from 'sharp';
 
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -17,9 +18,15 @@ export class PhotosService {
     originalName: string;
     mimeType: string;
     sizeBytes: number;
-    storagePath: string;
+    filename: string;
+    buffer: Buffer;
   }) {
-    const metadata = await sharp(this.storage.getAbsolutePath(params.storagePath)).metadata();
+    const storagePath = join('originals', params.filename);
+    const metadata = await sharp(params.buffer).metadata();
+
+    await this.storage.putObject(storagePath, params.buffer, {
+      contentType: params.mimeType,
+    });
 
     const photo = await this.prisma.photo.create({
       data: {
@@ -27,7 +34,7 @@ export class PhotosService {
         originalName: params.originalName,
         mimeType: params.mimeType,
         sizeBytes: params.sizeBytes,
-        storagePath: params.storagePath,
+        storagePath,
         width: metadata.width ?? null,
         height: metadata.height ?? null,
       },

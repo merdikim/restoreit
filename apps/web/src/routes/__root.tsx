@@ -26,6 +26,18 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       currentUser,
     };
   },
+  notFoundComponent: () => (
+    <div className="flex min-h-100 flex-col items-center justify-center p-8 text-center">
+      <h1 className="mb-2 text-4xl font-bold text-gray-900">404</h1>
+      <p className="mb-4 text-lg text-gray-600">Page not found</p>
+      <a
+        href="/"
+        className="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+      >
+        Go Home
+      </a>
+    </div>
+  ),
   head: () => ({
     meta: [
       { charSet: 'utf-8' },

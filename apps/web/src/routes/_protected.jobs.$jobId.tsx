@@ -93,11 +93,4 @@ function JobDetailPage() {
   );
 }
 
-function InfoRow(props: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <dt className="text-(--muted)">{props.label}</dt>
-      <dd className="font-medium text-right">{props.value}</dd>
-    </div>
-  );
-}
+

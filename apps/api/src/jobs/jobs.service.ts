@@ -88,7 +88,7 @@ export class JobsService {
     }
 
     return {
-      path: this.storage.getAbsolutePath(job.processedAsset.storagePath),
+      url: await this.storage.getDownloadUrl(job.processedAsset.storagePath, `${jobId}.png`),
     };
   }
 

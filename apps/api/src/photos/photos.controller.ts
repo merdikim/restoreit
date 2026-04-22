@@ -1,13 +1,12 @@
 import { BadRequestException, Controller, Inject, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
-import { extname, join } from 'node:path';
+import { extname } from 'node:path';
 
 import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
-import { getUploadRoot } from '../storage/storage-paths.js';
 import { PhotosService } from './photos.service.js';
 
 @ApiTags('photos')
@@ -33,15 +32,7 @@ export class PhotosController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: (_req, _file, callback) => {
-          callback(null, join(getUploadRoot(process.env.UPLOAD_DIR), 'originals'));
-        },
-        filename: (_req, file, callback) => {
-          const extension = extname(file.originalname);
-          callback(null, `${randomUUID()}${extension}`);
-        },
-      }),
+      storage: memoryStorage(),
       limits: {
         fileSize: 15 * 1024 * 1024, // 15 MB
       },
@@ -68,7 +59,8 @@ export class PhotosController {
       originalName: file.originalname,
       mimeType: file.mimetype,
       sizeBytes: file.size,
-      storagePath: join('originals', file.filename),
+      filename: `${randomUUID()}${extname(file.originalname)}`,
+      buffer: file.buffer,
     });
   }
 }

@@ -41,6 +41,6 @@ export class JobsController {
     @Res() response: Response,
   ) {
     const result = await this.jobsService.getJobDownload(user.id, id);
-    response.download(result.path);
+    response.redirect(result.url);
   }
 }

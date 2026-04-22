@@ -12,7 +12,7 @@ The current processing flow uses a mock provider built on top of `sharp` so the 
 - Backend: NestJS + TypeScript
 - Database: PostgreSQL + Prisma ORM
 - Auth: Email/password + JWT bearer token
-- Storage: Local filesystem abstraction, ready to swap with S3-style storage later
+- Storage: Cloudflare R2 object storage
 
 ## Project Structure
 
@@ -60,7 +60,7 @@ Modules:
 - `processing`: provider abstraction plus mock pipeline
 - `health`: healthcheck route
 - `prisma`: global Prisma service
-- `storage`: local filesystem storage abstraction
+- `storage`: Cloudflare R2-backed storage abstraction
 
 Core processing abstraction:
 
@@ -130,11 +130,16 @@ cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
 ```
 
-Update `apps/api/.env` with a running PostgreSQL database:
+Update `apps/api/.env` with a running PostgreSQL database and Cloudflare R2 credentials:
 
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/restoreit
 JWT_SECRET=change-me
+R2_ACCOUNT_ID=your-cloudflare-account-id
+R2_ACCESS_KEY_ID=your-r2-access-key-id
+R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+R2_BUCKET_NAME=restoreit
+R2_PUBLIC_URL=https://pub-your-bucket-id.r2.dev
 ```
 
 If you want a local database quickly, start the included Docker Postgres service:
@@ -190,6 +195,6 @@ Root scripts:
 
 - The frontend uploads the file first, then creates a job using the returned `photoId`.
 - Dashboard and job detail polling refresh every 2 seconds while a job is pending or processing.
-- The mock processor applies lightweight image transforms with `sharp` and writes a processed image to local storage.
+- Uploaded originals and processed images are stored in Cloudflare R2.
 - Replace `MockProcessingProvider` with a real AI-backed provider later without changing the job or REST layers.
 - TanStack Start generates `routeTree.gen.ts` on first dev/build run.
