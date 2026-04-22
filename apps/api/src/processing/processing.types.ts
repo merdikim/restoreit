@@ -2,6 +2,7 @@ export type ProcessingJobInput = {
   jobId: string;
   photoPath: string;
   originalName: string;
+  mimeType: string;
 };
 
 export type ProcessingJobOutput = {

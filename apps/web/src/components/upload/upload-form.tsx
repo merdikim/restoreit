@@ -43,7 +43,7 @@ export function UploadForm(props: {
           />
         </label>
         {previewUrl ? (
-          <img src={previewUrl} alt="Selected preview" className="h-72 w-full rounded-[28px] object-cover" />
+          <img src={previewUrl} alt="Selected preview" className="min-h-72 max-w-75 w-full rounded-[28px] object-cover" />
         ) : null}
       </div>
       <div>

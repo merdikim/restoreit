@@ -2,15 +2,15 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JobStatus } from '@prisma/client';
 
 import { PrismaService } from '../prisma/prisma.service.js';
-import { PROCESSING_PROVIDER } from './processing.tokens.js';
 import type { ProcessingProvider } from './processing.types.js';
+import { PROCESSING_PROVIDER } from './processing.tokens.js';
 
 @Injectable()
 export class ProcessingService {
   private readonly logger = new Logger(ProcessingService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject(PROCESSING_PROVIDER) private readonly provider: ProcessingProvider,
   ) {}
 
@@ -41,6 +41,7 @@ export class ProcessingService {
           jobId,
           photoPath: job.photo.storagePath,
           originalName: job.photo.originalName,
+          mimeType: job.photo.mimeType,
         },
         async (progress) => {
           await this.prisma.job.update({

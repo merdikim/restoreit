@@ -3,7 +3,7 @@ import { JobStatus } from '@prisma/client';
 
 import { PhotosService } from '../photos/photos.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-//import { ProcessingService } from '../processing/processing.service.js';
+import { ProcessingService } from '../processing/processing.service.js';
 import { STORAGE_PROVIDER } from '../storage/storage.tokens.js';
 import type { StorageProvider } from '../storage/storage.types.js';
 
@@ -12,7 +12,7 @@ export class JobsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject(PhotosService) private readonly photosService: PhotosService,
-    //private readonly processingService: ProcessingService,
+    @Inject(ProcessingService) private readonly processingService: ProcessingService,
     @Inject(STORAGE_PROVIDER) private readonly storage: StorageProvider,
   ) {}
 
@@ -25,7 +25,7 @@ export class JobsService {
     const job = await this.prisma.job.create({
       data: {
         userId,
-        photoId
+        photoId,
       },
       include: {
         photo: true,
@@ -33,7 +33,7 @@ export class JobsService {
       },
     });
 
-    // void this.processingService.processJob(job.id);
+    void this.processingService.processJob(job.id);
 
     return this.toResponse(job);
   }
