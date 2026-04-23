@@ -16,7 +16,7 @@ function LandingPage() {
             Bring faded family photos back with an AI-ready restoration workflow.
           </h1>
           <p className="max-w-2xl text-lg text-(--muted)">
-            Upload an old image, choose restoration options, and track progress from upload to download. The mock
+            Upload an old image and track progress from upload to download. The mock
             pipeline is ready to be swapped for real AI inference later.
           </p>
           <div className="flex flex-wrap gap-4">
