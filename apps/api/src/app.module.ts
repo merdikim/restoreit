@@ -19,7 +19,7 @@ import { StorageModule } from './storage/storage.module.js';
     StorageModule,
     PhotosModule,
     JobsModule,
-    //ProcessingModule,
+    ProcessingModule,
     //HealthModule,
   ],
 })

@@ -7,7 +7,7 @@ export function ImageComparison(props: {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <SectionCard>
-        <p className="mb-4 text-sm uppercase tracking-[0.2em] text-(--muted)">Original</p>
+        <p className="mb-4 text-sm uppercase tracking-[0.2em] text-(--muted)"> Original </p>
         <img src={props.originalUrl} alt="Original upload" className="min-h-105 w-full rounded-2xl object-cover" />
       </SectionCard>
       <SectionCard>
