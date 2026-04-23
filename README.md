@@ -177,6 +177,16 @@ Web:
 npm run dev:web
 ```
 
+## Vercel Deployment
+
+Deploy the TanStack Start app from `apps/web` as its own Vercel project.
+
+- Root Directory: `apps/web`
+- Install Command: `npm install`
+- Build Command: `npm run build`
+
+The web app now builds with Nitro, which is the current TanStack Start deployment path for Vercel.
+
 ## Scripts
 
 Root scripts:
