@@ -36,13 +36,49 @@ export class OpenAIProcessingProvider implements ProcessingProvider {
       model: "gpt-image-1.5",
       image: imageFile,
       prompt: [
-        'Restore and enhance this old photograph.',
-        'Preserve the original composition, identity, and overall scene.',
-        'Repair damage, improve clarity, clean up scratches or fading, and produce a natural-looking restored image.',
-        'Return one final restored image.',
-      ].join(' '),
+  "Restore and enhance this image with high fidelity while preserving authenticity.",
+
+  "Step 1: Analyze the image and determine its condition:",
+  "- Whether it is a scanned photo or a photo of a printed image",
+  "- Presence of tilt, perspective distortion, or misalignment",
+  "- Presence of background outside the actual photo (e.g., table, fabric, edges)",
+  "- Level of blur, noise, fading, or color cast",
+  "- Any obstructions or missing/damaged areas",
+
+  "Step 2: Normalize the image if needed:",
+  "- If the image is a photo of a printed photo, isolate and extract only the original photograph",
+  "- Remove surrounding background elements (table, cloth, borders, edges)",
+  "- Correct perspective distortion and straighten the image",
+  "- Crop and align the image to a natural, properly framed composition",
+
+  "Step 3: Restore while preserving identity:",
+  "- Preserve all faces, facial features, expressions, body proportions, and pose exactly",
+  "- Do not alter identity, do not reinterpret subjects, do not generate new features",
+
+  "Step 4: Repair and enhance:",
+  "- Fix scratches, dust, stains, tears, blur, and noise",
+  "- Improve clarity and sharpness, especially on key subjects",
+  "- Maintain natural skin texture and realistic detail",
+  "- Avoid over-sharpening or artificial detail generation",
+
+  "Step 5: Color and lighting correction:",
+  "- Remove color casts (yellow, green, blue) and restore natural tones",
+  "- Correct exposure, contrast, and white balance evenly",
+  "- If the image is black and white, keep it black and white unless colorization is explicitly required",
+
+  "Step 6: Handle difficult cases:",
+  "- If parts are obstructed or missing, reconstruct them realistically based on surrounding context",
+  "- Keep reconstruction subtle and historically plausible",
+
+  "Step 7: Preserve realism:",
+  "- Avoid stylization, filters, or modern AI-generated look",
+  "- Avoid plastic skin, over-smoothing, or unrealistic lighting",
+  "- Ensure the result looks like a clean, naturally preserved version of the original image",
+
+  "Return one final restored image only."
+].join(' '),
       input_fidelity: 'high',
-      quality: 'high',
+      quality: 'medium',
       size: 'auto',
       output_format: 'png',
     });
