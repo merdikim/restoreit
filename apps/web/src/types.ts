@@ -36,6 +36,7 @@ export type CheckoutSession = {
   paymentAddress?: string;
   network?: string;
   chainId?: number;
+  rpcUrl?: string;
   tokenAddress?: string | null;
   currencyCode?: string;
   amountDisplay?: string;

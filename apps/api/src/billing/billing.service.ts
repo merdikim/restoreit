@@ -421,6 +421,7 @@ export class BillingService {
       paymentAddress: this.usdcPaymentWalletAddress,
       network: this.baseNetworkName,
       chainId: this.baseChainId,
+      rpcUrl: this.baseRpcUrl,
       tokenAddress: this.baseUsdcTokenAddress,
       currencyCode: 'USDC',
       amountDisplay,

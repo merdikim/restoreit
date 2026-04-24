@@ -3,24 +3,24 @@ export type BillingProvider = (typeof BILLING_PROVIDERS)[number];
 
 export const TOKEN_PACKAGES = [
   {
-    id: 'tokens_10',
-    name: '10 tokens',
-    description: '10 restoration tokens',
-    amountUsdCents: 100,
-    tokenAmount: 10,
-  },
-  {
-    id: 'tokens_50',
-    name: '50 tokens',
-    description: '50 restoration tokens',
+    id: 'tokens_5',
+    name: '20 tokens',
+    description: '20 restoration tokens',
     amountUsdCents: 500,
-    tokenAmount: 50,
+    tokenAmount: 20,
   },
   {
-    id: 'tokens_100',
+    id: 'tokens_10',
+    name: '40 tokens',
+    description: '40 restoration tokens',
+    amountUsdCents: 1000,
+    tokenAmount: 40,
+  },
+  {
+    id: 'tokens_20',
     name: '100 tokens',
     description: '100 restoration tokens',
-    amountUsdCents: 1000,
+    amountUsdCents: 2000,
     tokenAmount: 100,
   },
 ] as const;
