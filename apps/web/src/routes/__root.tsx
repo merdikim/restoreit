@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 import type { ReactNode } from 'react';
 import { ClerkProvider } from '@clerk/tanstack-react-start';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClientProvider } from '@tanstack/react-query';
 import {
   createRootRouteWithContext,
@@ -8,9 +9,12 @@ import {
   Outlet,
   Scripts,
 } from '@tanstack/react-router';
+import { WagmiProvider } from 'wagmi';
 
+import '@rainbow-me/rainbowkit/styles.css';
 import '@/styles.css';
 import type { User } from '@/types';
+import { walletConfig } from '@/lib/wallet';
 import { getCurrentUserServerFn } from '@/server/auth';
 
 type RouterContext = {
@@ -54,9 +58,13 @@ function RootComponent() {
 
   return (
     <RootDocument>
-      <QueryClientProvider client={queryClient}>
-        <Outlet />
-      </QueryClientProvider>
+      <WagmiProvider config={walletConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
+            <Outlet />
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </RootDocument>
   );
 }

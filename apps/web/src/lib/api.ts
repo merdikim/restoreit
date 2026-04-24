@@ -1,5 +1,5 @@
 import { env } from './env';
-import type { Job, Photo } from '../types';
+import type { BillingProvider, BillingSummary, CheckoutConfirmation, CheckoutSession, Job, Photo } from '../types';
 
 type RequestOptions = RequestInit & {
   auth?: boolean;
@@ -40,6 +40,26 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 }
 
 export const api = {
+  getBillingSummary(authToken: string) {
+    return request<BillingSummary>('/billing/summary', { authToken });
+  },
+  createCheckoutSession(packageId: string, provider: BillingProvider, authToken: string) {
+    return request<CheckoutSession>('/billing/checkout-session', {
+      method: 'POST',
+      body: JSON.stringify({ packageId, provider }),
+      authToken,
+    });
+  },
+  confirmCheckoutSession(sessionId: string, authToken: string, transactionHash?: string) {
+    return request<CheckoutConfirmation>(
+      `/billing/checkout-session/${sessionId}/confirm`,
+      {
+        method: 'POST',
+        body: JSON.stringify(transactionHash ? { transactionHash } : {}),
+        authToken,
+      },
+    );
+  },
   uploadPhoto(file: File, authToken: string) {
     const formData = new FormData();
     formData.append('file', file);

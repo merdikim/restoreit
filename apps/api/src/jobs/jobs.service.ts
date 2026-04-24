@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { JobStatus } from '@prisma/client';
 
+import { BillingService } from '../billing/billing.service.js';
 import { PhotosService } from '../photos/photos.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ProcessingService } from '../processing/processing.service.js';
@@ -11,6 +12,7 @@ import type { StorageProvider } from '../storage/storage.types.js';
 export class JobsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(BillingService) private readonly billingService: BillingService,
     @Inject(PhotosService) private readonly photosService: PhotosService,
     @Inject(ProcessingService) private readonly processingService: ProcessingService,
     @Inject(STORAGE_PROVIDER) private readonly storage: StorageProvider,
@@ -22,15 +24,19 @@ export class JobsService {
       throw new NotFoundException('Photo not found');
     }
 
-    const job = await this.prisma.job.create({
-      data: {
-        userId,
-        photoId,
-      },
-      include: {
-        photo: true,
-        processedAsset: true,
-      },
+    const job = await this.prisma.$transaction(async (tx) => {
+      await this.billingService.consumeTokens(userId, undefined, tx);
+
+      return tx.job.create({
+        data: {
+          userId,
+          photoId,
+        },
+        include: {
+          photo: true,
+          processedAsset: true,
+        },
+      });
     });
 
     void this.processingService.processJob(job.id);

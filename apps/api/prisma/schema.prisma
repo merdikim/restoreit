@@ -14,6 +14,56 @@ enum JobStatus {
   failed
 }
 
+enum TokenPurchaseStatus {
+  pending
+  completed
+}
+
+enum PaymentProvider {
+  stripe
+  crypto
+}
+
+model BillingAccount {
+  id               String               @id @default(cuid())
+  userId           String               @unique
+  tokenBalance     Int                  @default(0)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  purchases        TokenPurchase[]
+  paymentProfiles  BillingPaymentProfile[]
+}
+
+model BillingPaymentProfile {
+  id                 String          @id @default(cuid())
+  billingAccountId   String
+  provider           PaymentProvider
+  providerCustomerId String
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  billingAccount     BillingAccount  @relation(fields: [billingAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerCustomerId])
+  @@unique([billingAccountId, provider])
+}
+
+model TokenPurchase {
+  id                String              @id @default(cuid())
+  billingAccountId  String
+  provider          PaymentProvider
+  providerSessionId String              @unique
+  providerPaymentId String?
+  packageId         String
+  currencyCode      String
+  amountMinor       Int
+  tokenAmount       Int
+  status            TokenPurchaseStatus @default(pending)
+  metadata          Json?
+  createdAt         DateTime            @default(now())
+  completedAt       DateTime?
+  billingAccount    BillingAccount      @relation(fields: [billingAccountId], references: [id], onDelete: Cascade)
+}
+
 model Photo {
   id           String   @id @default(cuid())
   userId       String

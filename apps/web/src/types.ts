@@ -12,6 +12,43 @@ export type AuthResponse = {
   user: User;
 };
 
+export type TokenPackage = {
+  id: string;
+  name: string;
+  description: string;
+  amountUsdCents: number;
+  tokenAmount: number;
+};
+
+export type BillingProvider = 'stripe' | 'crypto';
+
+export type BillingSummary = {
+  tokenBalance: number;
+  jobTokenCost: number;
+  packages: TokenPackage[];
+  supportedProviders: BillingProvider[];
+};
+
+export type CheckoutSession = {
+  sessionId: string;
+  provider: BillingProvider;
+  checkoutUrl: string | null;
+  paymentAddress?: string;
+  network?: string;
+  chainId?: number;
+  tokenAddress?: string | null;
+  currencyCode?: string;
+  amountDisplay?: string;
+  packageName?: string;
+};
+
+export type CheckoutConfirmation = {
+  status: string;
+  tokenBalance: number;
+  tokensAdded: number;
+  provider: BillingProvider;
+};
+
 export type Photo = {
   id: string;
   originalName: string;

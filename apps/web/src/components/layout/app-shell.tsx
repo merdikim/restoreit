@@ -26,9 +26,13 @@ export function AppShell(props: { children: React.ReactNode }) {
                 <Link to="/jobs/new" activeProps={{ className: 'text-[var(--brand-dark)]' }}>
                   New Job
                 </Link>
-                {/* <Link to="/settings" activeProps={{ className: 'text-[var(--brand-dark)]' }}>
+                <Link
+                  to="/settings"
+                  search={{ checkout: undefined, provider: undefined, session_id: undefined }}
+                  activeProps={{ className: 'text-[var(--brand-dark)]' }}
+                >
                   Settings
-                </Link> */}
+                </Link>
               </>
             ) : null}
             <Show when="signed-in">

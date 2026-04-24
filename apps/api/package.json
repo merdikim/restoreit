@@ -29,6 +29,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sharp": "^0.34.0",
+    "stripe": "^22.0.2",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {

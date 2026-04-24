@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'node:path';
+import { BillingModule } from './billing/billing.module.js';
 import { appRoot } from './common/app-paths.js';
 import { HealthModule } from './health/health.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
@@ -16,6 +17,7 @@ import { StorageModule } from './storage/storage.module.js';
       envFilePath: join(appRoot, '.env'),
     }),
     PrismaModule,
+    BillingModule,
     StorageModule,
     PhotosModule,
     JobsModule,

@@ -3,6 +3,7 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { JobCard } from '@/components/dashboard/job-card';
 import { SectionCard } from '@/components/layout/section-card';
 import { useCurrentUser } from '@/hooks/use-auth';
+import { useBillingSummary } from '@/hooks/use-billing';
 import { useJobs } from '@/hooks/use-jobs';
 
 export const Route = createFileRoute('/_protected/dashboard')({
@@ -12,6 +13,7 @@ export const Route = createFileRoute('/_protected/dashboard')({
 function DashboardPage() {
   const { data: user } = useCurrentUser();
   const jobsQuery = useJobs();
+  const billingQuery = useBillingSummary();
 
   return (
     <div className="space-y-8">
@@ -24,6 +26,7 @@ function DashboardPage() {
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
+          <StatCard label="Tokens" value={String(billingQuery.data?.tokenBalance ?? 0)} />
           <StatCard label="Total jobs" value={String(jobsQuery.data?.length ?? 0)} />
           <StatCard
             label="Completed"
