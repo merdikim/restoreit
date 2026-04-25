@@ -117,7 +117,7 @@ function JobDetailPage() {
             <div className="mt-4 space-y-3 text-sm">
               <p className="text-(--muted)">Published {formatDate(job.arweaveUpload.createdAt)}</p>
               <a
-                href={'job.arweaveUpload.publicUrl'}
+                href={`https://turbo-gateway.com/raw/${job.arweaveUpload.transactionId}`}
                 target="_blank"
                 rel="noreferrer"
                 className="block font-semibold text-(--brand)"
