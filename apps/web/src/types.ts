@@ -71,6 +71,12 @@ export type ProcessedAsset = {
   downloadUrl: string;
 };
 
+export type ArweaveUpload = {
+  transactionId: string;
+  ownerAddress: string;
+  createdAt: string;
+};
+
 export type Job = {
   id: string;
   status: JobStatus;
@@ -81,4 +87,5 @@ export type Job = {
   completedAt: string | null;
   photo: Photo;
   processedAsset: ProcessedAsset | null;
+  arweaveUpload: ArweaveUpload | null;
 };

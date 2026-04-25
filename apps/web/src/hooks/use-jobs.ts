@@ -1,6 +1,7 @@
 import { useAuth } from '@clerk/tanstack-react-start';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import type { Job } from '@/types';
 
 async function requireToken(getToken: () => Promise<string | null>) {
   const token = await getToken();
@@ -58,5 +59,21 @@ export function useUploadPhoto() {
 
   return useMutation({
     mutationFn: async (file: File) => api.uploadPhoto(file, await requireToken(getToken)),
+  });
+}
+
+export function usePublishJobToArweave(jobId: string) {
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => api.publishJobToArweave(jobId, await requireToken(getToken)),
+    onSuccess: (arweaveUpload) => {
+      queryClient.setQueryData(['jobs', jobId], (current: Job | undefined) =>
+        current ? { ...current, arweaveUpload } : current,
+      );
+      void queryClient.invalidateQueries({ queryKey: ['jobs', jobId] });
+      void queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    },
   });
 }

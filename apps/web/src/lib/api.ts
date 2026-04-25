@@ -83,6 +83,12 @@ export const api = {
   getJob(jobId: string, authToken: string) {
     return request<Job>(`/jobs/${jobId}`, { authToken });
   },
+  publishJobToArweave(jobId: string, authToken: string) {
+    return request<Job['arweaveUpload']>(`/jobs/${jobId}/publish-arweave`, {
+      method: 'POST',
+      authToken,
+    });
+  },
   getJobStatus(jobId: string) {
     return request<Job>(`/jobs/${jobId}/status`);
   },

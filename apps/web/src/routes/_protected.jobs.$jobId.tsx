@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ImageComparison } from '@/components/jobs/image-comparison';
 import { JobStatusBadge } from '@/components/jobs/job-status-badge';
 import { SectionCard } from '@/components/layout/section-card';
-import { useJob } from '@/hooks/use-jobs';
+import { useJob, usePublishJobToArweave } from '@/hooks/use-jobs';
 import { api } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 
@@ -17,6 +17,7 @@ function JobDetailPage() {
   const { jobId } = Route.useParams();
   const { getToken } = useAuth();
   const jobQuery = useJob(jobId);
+  const publishToArweave = usePublishJobToArweave(jobId);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -39,6 +40,22 @@ function JobDetailPage() {
         </div>
         <div className="flex items-center gap-3">
           <JobStatusBadge status={job.status} />
+          {job.processedAsset && !job.arweaveUpload ? (
+            <button
+              type="button"
+              className="rounded-full border border-(--brand) px-5 py-3 font-semibold text-(--brand)"
+              disabled={publishToArweave.isPending}
+              onClick={async () => {
+                try {
+                  await publishToArweave.mutateAsync();
+                } catch {
+                  return;
+                }
+              }}
+            >
+              {publishToArweave.isPending ? 'Publishing...' : 'Publish to Arweave'}
+            </button>
+          ) : null}
           {job.processedAsset ? (
             <button
               type="button"
@@ -83,6 +100,38 @@ function JobDetailPage() {
           </p>
           {job.errorMessage ? <p className="mt-3 text-sm text-(--danger)">{job.errorMessage}</p> : null}
           {downloadError ? <p className="mt-3 text-sm text-(--danger)">{downloadError}</p> : null}
+          {publishToArweave.error ? (
+            <p className="mt-3 text-sm text-(--danger)">{publishToArweave.error.message}</p>
+          ) : null}
+          {job.processedAsset && !job.arweaveUpload ? (
+            <p className="mt-3 text-sm text-(--muted)">
+              Publishing to Arweave makes this restored image public and permanent. The upload is signed and paid for by
+              the backend wallet.
+            </p>
+          ) : null}
+        </SectionCard>
+
+        <SectionCard>
+          <h2 className="text-2xl font-semibold">Arweave deployment</h2>
+          {job.arweaveUpload ? (
+            <div className="mt-4 space-y-3 text-sm">
+              <p className="text-(--muted)">Published {formatDate(job.arweaveUpload.createdAt)}</p>
+              <a
+                href={'job.arweaveUpload.publicUrl'}
+                target="_blank"
+                rel="noreferrer"
+                className="block font-semibold text-(--brand)"
+              >
+                View on gateway
+              </a>
+              <p className="break-all text-(--muted)">Transaction: {job.arweaveUpload.transactionId}</p>
+              {/* <p className="break-all text-(--muted)">URI: {job.arweaveUpload.arweaveUrl}</p> */}
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-(--muted)">
+              This job has not been published to Arweave yet. You can publish it after processing finishes.
+            </p>
+          )}
         </SectionCard>
       </div>
 
@@ -92,5 +141,4 @@ function JobDetailPage() {
     </div>
   );
 }
-
 
