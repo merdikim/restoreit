@@ -43,4 +43,9 @@ export class JobsController {
     const result = await this.jobsService.getJobDownload(user.id, id);
     response.redirect(result.url);
   }
+
+  @Post(':id/publish-arweave')
+  publishJobToArweave(@CurrentUser() user: { id: string }, @Param('id') id: string) {
+    return this.jobsService.publishProcessedImageToArweave(user.id, id);
+  }
 }

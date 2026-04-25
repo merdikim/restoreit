@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ArweaveModule } from '../arweave/arweave.module.js';
 import { BillingModule } from '../billing/billing.module.js';
 import { PhotosModule } from '../photos/photos.module.js';
 import { ProcessingModule } from '../processing/processing.module.js';
@@ -7,7 +8,7 @@ import { JobsController } from './jobs.controller.js';
 import { JobsService } from './jobs.service.js';
 
 @Module({
-  imports: [BillingModule, PhotosModule, ProcessingModule],
+  imports: [ArweaveModule, BillingModule, PhotosModule, ProcessingModule],
   controllers: [JobsController],
   providers: [JobsService],
 })

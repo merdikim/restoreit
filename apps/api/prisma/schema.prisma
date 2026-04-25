@@ -90,6 +90,7 @@ model Job {
   completedAt    DateTime?
   photo          Photo             @relation(fields: [photoId], references: [id], onDelete: Cascade)
   processedAsset ProcessedAsset?
+  arweaveUpload  ArweaveUpload?
 }
 
 model ProcessedAsset {
@@ -103,4 +104,14 @@ model ProcessedAsset {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model ArweaveUpload {
+  id            String   @id @default(cuid())
+  jobId         String   @unique
+  transactionId String   @unique
+  ownerAddress  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  job           Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }

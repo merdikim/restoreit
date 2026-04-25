@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { JobStatus } from '@prisma/client';
 
+import { ArweaveService } from '../arweave/arweave.service.js';
 import { BillingService } from '../billing/billing.service.js';
 import { PhotosService } from '../photos/photos.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -12,6 +13,7 @@ import type { StorageProvider } from '../storage/storage.types.js';
 export class JobsService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(ArweaveService) private readonly arweaveService: ArweaveService,
     @Inject(BillingService) private readonly billingService: BillingService,
     @Inject(PhotosService) private readonly photosService: PhotosService,
     @Inject(ProcessingService) private readonly processingService: ProcessingService,
@@ -33,6 +35,7 @@ export class JobsService {
           photoId,
         },
         include: {
+          arweaveUpload: true,
           photo: true,
           processedAsset: true,
         },
@@ -48,6 +51,7 @@ export class JobsService {
     const jobs = await this.prisma.job.findMany({
       where: { userId },
       include: {
+        arweaveUpload: true,
         photo: true,
         processedAsset: true,
       },
@@ -66,6 +70,7 @@ export class JobsService {
         userId,
       },
       include: {
+        arweaveUpload: true,
         photo: true,
         processedAsset: true,
       },
@@ -98,6 +103,52 @@ export class JobsService {
     };
   }
 
+  async publishProcessedImageToArweave(userId: string, jobId: string) {
+    const job = await this.prisma.job.findFirst({
+      where: {
+        id: jobId,
+        userId,
+      },
+      include: {
+        arweaveUpload: true,
+        processedAsset: true,
+      },
+    });
+
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+
+    if (!job.processedAsset) {
+      throw new NotFoundException('Processed image not available');
+    }
+
+    if (job.arweaveUpload) {
+      return this.toArweaveUploadResponse(job.arweaveUpload);
+    }
+
+    const buffer = await this.storage.getObjectBuffer(job.processedAsset.storagePath);
+    const upload = await this.arweaveService.uploadFile({
+      buffer,
+      contentType: job.processedAsset.mimeType,
+      jobId: job.id,
+    });
+
+    const record = await this.prisma.arweaveUpload.upsert({
+      where: {
+        jobId: job.id,
+      },
+      create: {
+        jobId: job.id,
+        transactionId: upload.transactionId,
+        ownerAddress: upload.ownerAddress,
+      },
+      update: {},
+    });
+
+    return this.toArweaveUploadResponse(record);
+  }
+
   toResponse(job: {
     id: string;
     status: JobStatus;
@@ -124,6 +175,11 @@ export class JobsService {
       height: number | null;
       createdAt: Date;
     } | null;
+    arweaveUpload: {
+      transactionId: string;
+      ownerAddress: string;
+      createdAt: Date;
+    } | null;
   }) {
     return {
       id: job.id,
@@ -145,6 +201,19 @@ export class JobsService {
             downloadUrl: `/api/jobs/${job.id}/download`,
           }
         : null,
+      arweaveUpload: job.arweaveUpload ? this.toArweaveUploadResponse(job.arweaveUpload) : null,
+    };
+  }
+
+  private toArweaveUploadResponse(upload: {
+    transactionId: string;
+    ownerAddress: string;
+    createdAt: Date;
+  }) {
+    return {
+      transactionId: upload.transactionId,
+      ownerAddress: upload.ownerAddress,
+      createdAt: upload.createdAt,
     };
   }
 }
